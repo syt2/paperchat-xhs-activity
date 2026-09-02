@@ -97,6 +97,13 @@
       line-height: 1.55;
     }
 
+    .claim-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
     .claim-label {
       display: block;
       color: var(--muted);
@@ -138,6 +145,77 @@
     .copy-btn:focus-visible {
       outline: 3px solid rgba(217, 95, 23, 0.32);
       outline-offset: 3px;
+    }
+
+    .qr-btn {
+      min-height: 44px;
+      padding: 10px 14px;
+      border: 1px solid rgba(217, 95, 23, 0.42);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--accent-dark);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .qr-btn:hover {
+      background: var(--accent-soft);
+    }
+
+    .qr-btn:focus-visible {
+      outline: 3px solid rgba(217, 95, 23, 0.32);
+      outline-offset: 3px;
+    }
+
+    .qr-dialog {
+      width: min(420px, calc(100vw - 28px));
+      margin: auto;
+      padding: 0;
+      border: 0;
+      border-radius: 20px;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 28px 80px rgba(37, 24, 14, 0.3);
+    }
+
+    .qr-dialog::backdrop {
+      background: rgba(33, 27, 22, 0.56);
+    }
+
+    .qr-dialog-inner {
+      padding: 22px;
+      text-align: center;
+    }
+
+    .qr-dialog h2 {
+      margin-bottom: 6px;
+    }
+
+    .qr-dialog p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .qr-image {
+      display: block;
+      width: min(100%, 360px);
+      margin: 0 auto 18px;
+      border-radius: 14px;
+    }
+
+    .qr-close {
+      min-height: 42px;
+      padding: 9px 20px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     .content {
@@ -232,8 +310,15 @@
         flex-direction: column;
       }
 
-      .copy-btn {
+      .claim-actions {
         width: 100%;
+        margin-left: 0;
+      }
+
+      .claim-actions .copy-btn,
+      .qr-btn {
+        flex: 1;
+        width: auto;
       }
     }
 
@@ -256,7 +341,10 @@
           <span class="claim-label">私信帖子链接领奖；追加奖励请附点赞 + 收藏截图</span>
           <strong class="handle">@paperchat</strong>
         </div>
-        <button class="copy-btn" type="button" aria-live="polite" data-copy-account>复制账号</button>
+        <div class="claim-actions">
+          <button class="copy-btn" type="button" aria-live="polite" data-copy-account>复制账号</button>
+          <button class="qr-btn" type="button" data-show-qr>账号二维码</button>
+        </div>
         <p class="claim-note">奖励由 PaperChat 人工审核并通过小红书私信发放，回复可能稍有延迟，敬请谅解。</p>
       </div>
     </header>
@@ -296,8 +384,20 @@
     </div>
   </main>
 
+  <dialog class="qr-dialog" aria-labelledby="qr-title" data-qr-dialog>
+    <div class="qr-dialog-inner">
+      <h2 id="qr-title">扫码打开小红书</h2>
+      <p>搜索并私信 @paperchat 领奖</p>
+      <img class="qr-image" src="assets/paperchat-xhs-qr-crop.jpg" alt="PaperChat 小红书账号 paperchat 二维码" />
+      <button class="qr-close" type="button" data-close-qr>关闭</button>
+    </div>
+  </dialog>
+
   <script>
     const copyButton = document.querySelector("[data-copy-account]");
+    const showQrButton = document.querySelector("[data-show-qr]");
+    const qrDialog = document.querySelector("[data-qr-dialog]");
+    const closeQrButton = document.querySelector("[data-close-qr]");
 
     function fallbackCopy(text) {
       const input = document.createElement("textarea");
@@ -321,6 +421,12 @@
           ? "已复制 paperchat"
           : "账号：paperchat";
       }
+    });
+
+    showQrButton?.addEventListener("click", () => qrDialog?.showModal());
+    closeQrButton?.addEventListener("click", () => qrDialog?.close());
+    qrDialog?.addEventListener("click", (event) => {
+      if (event.target === qrDialog) qrDialog.close();
     });
   </script>
 </body>
